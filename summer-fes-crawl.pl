@@ -36,11 +36,12 @@ my $feses = {
     "FUJI ROCK FESTIVAL '13" => {
         locations => {
             '新潟県 湯沢町 苗場スキー場' => {
+                id => 1,
                 lineup_page => 'http://www.fujirockfestival.com/artist/',
                 days => {
-                    '7/26' => [],
-                    '7/27' => [],
-                    '7/28' => [],
+                    '2013/7/26' => [],
+                    '2013/7/27' => [],
+                    '2013/7/28' => [],
                 },
             },
         },
@@ -48,17 +49,19 @@ my $feses = {
     'SUMMER SONIC 2013' => {
         locations => {
             '東京' => {
+                id => 2,
                 lineup_page => 'http://www.summersonic.com/2013/lineup/index.html',
                 days => {
-                    '8/10' => [],
-                    '8/11' => [],
+                    '2013/8/10' => [],
+                    '2013/8/11' => [],
                 },
             },
             '大阪' => {
+                id => 3,
                 lineup_page => 'http://www.summersonic.com/2013/lineup/osaka.html',
                 days => {
-                    '8/10' => [],
-                    '8/11' => [],
+                    '2013/8/10' => [],
+                    '2013/8/11' => [],
                 },
             },
         },
@@ -70,45 +73,6 @@ getopts('p:', \%opts);
 
 my $checked_date = DateTime->now->epoch;
 
-# sub parse_videos {
-#     my ($content) = @_;
-# 
-#     $content =~ s{\A.*\$\("\#show-results-list"\)\.replaceWith\("(.*)"\);.*\z}{$1}xms;
-#     $content =~ s{\\}{}g;
-#     return grep {$_} map {
-#         my ($url, $title) = $_ =~ m{
-#             show-title-container .*
-#             href="([^"]+)" .*
-#             class="bold-link[^"]*">([^<]+)</a> .*
-#         }mxs;
-#         my ($seasons, $episodes) = $_ =~ m{
-#             digit'>(\d+)< .*
-#             digit'>(\d+)< .*
-#         }mxs;
-#         $title ?
-#             +{
-#                 url => $url,
-#                 title => $title,
-#                 seasons => $seasons || 1,
-#                 episodes => $episodes || 1,
-#             } : undef;
-#     } split /<\\?\/td>/, $content;
-# }
-# 
-# sub exists_check {
-#     my ($vs, $adds) = @_;
-#     
-#     my @new_videos = ();
-#     V: for my $nv (@$adds) {
-#         for my $v (@$vs) {
-# #            print 'exists ' . encode_utf8($v->{url}) . "\n" if $v->{url} eq $nv->{url};
-#             next V if $v->{url} eq $nv->{url};
-#         }
-#         push @new_videos, $nv;
-#     }
-#     return @new_videos;
-# }
-# 
 # sub twitter_post {
 #     my ($message) = @_;
 # 
@@ -200,37 +164,37 @@ $Web::Query::UserAgent = LWP::UserAgent->new( agent => 'Mozilla/5.0' );
 sub fetch_fujirock {
     my $location = $feses->{"FUJI ROCK FESTIVAL '13"}->{locations}->{'新潟県 湯沢町 苗場スキー場'};
     wq($location->{lineup_page})
-        # 7/26
+        # 2013/7/26
         ->find('div#listingFri .rightArtists img')
         ->each(sub {
-            push $location->{days}->{'7/26'}, {id => $_->parent->attr('href'), name => $_->attr('alt')};
+            push $location->{days}->{'2013/7/26'}, {id => $_->parent->attr('href'), name => $_->attr('alt')};
         })
         ->end
-        ->find('div#listingFri .rightArtists li a')
+        ->find('div#listingFri .listingArea li a')
         ->each(sub{
-            push $location->{days}->{'7/26'}, {id => $_->attr('href'), name => $_->text};
+            push $location->{days}->{'2013/7/26'}, {id => $_->attr('href'), name => $_->text};
         })
         ->end
-        # 7/27
+        # 2013/7/27
         ->find('div#listingSat .rightArtists img')
         ->each(sub {
-            push $location->{days}->{'7/27'}, {id => $_->parent->attr('href'), name => $_->attr('alt')};
+            push $location->{days}->{'2013/7/27'}, {id => $_->parent->attr('href'), name => $_->attr('alt')};
         })
         ->end
-        ->find('div#listingSat .rightArtists li a')
+        ->find('div#listingSat .listingArea li a')
         ->each(sub{
-            push $location->{days}->{'7/27'}, {id => $_->attr('href'), name => $_->text};
+            push $location->{days}->{'2013/7/27'}, {id => $_->attr('href'), name => $_->text};
         })
         ->end
-        # 7/28
+        # 2013/7/28
         ->find('div#listingSun .rightArtists img')
         ->each(sub {
-            push $location->{days}->{'7/28'}, {id => $_->parent->attr('href'), name => $_->attr('alt')};
+            push $location->{days}->{'2013/7/28'}, {id => $_->parent->attr('href'), name => $_->attr('alt')};
         })
         ->end
-        ->find('div#listingSun .rightArtists li a')
+        ->find('div#listingSun .listingArea li a')
         ->each(sub{
-            push $location->{days}->{'7/28'}, {id => $_->attr('href'), name => $_->text};
+            push $location->{days}->{'2013/7/28'}, {id => $_->attr('href'), name => $_->text};
         })
     ;
 }
@@ -238,36 +202,35 @@ sub fetch_fujirock {
 sub fetch_summersonic {
     my $location = $feses->{'SUMMER SONIC 2013'}->{locations}->{'東京'};
     wq($location->{lineup_page})
-        # 8/10
+        # 2013/8/10
         ->find('ul#list810 a img')
         ->each(sub {
-            push $location->{days}->{'8/10'}, {id => $_->attr('src'), name => $_->attr('alt')};
+            push $location->{days}->{'2013/8/10'}, {id => $_->attr('src'), name => $_->attr('alt')};
         })
         ->end
-        # 7/27
+        # 2013/7/27
         ->find('ul#list811 a img')
         ->each(sub {
-            push $location->{days}->{'8/11'}, {id => $_->attr('src'), name => $_->attr('alt')};
+            push $location->{days}->{'2013/8/11'}, {id => $_->attr('src'), name => $_->attr('alt')};
         })
         ->end
     ;
 
     $location = $feses->{'SUMMER SONIC 2013'}->{locations}->{'大阪'};
     wq($location->{lineup_page})
-        # 8/10
+        # 2013/8/10
         ->find('ul#list810 a img')
         ->each(sub {
-            push $location->{days}->{'8/10'}, {id => $_->attr('src'), name => $_->attr('alt')};
+            push $location->{days}->{'2013/8/10'}, {id => $_->attr('src'), name => $_->attr('alt')};
         })
         ->end
-        # 7/27
+        # 2013/7/27
         ->find('ul#list811 a img')
         ->each(sub {
-            push $location->{days}->{'8/11'}, {id => $_->attr('src'), name => $_->attr('alt')};
+            push $location->{days}->{'2013/8/11'}, {id => $_->attr('src'), name => $_->attr('alt')};
         })
         ->end
     ;
-    $logger->debug(Dumper $feses);
 }
 
 try {
@@ -276,90 +239,47 @@ try {
     # summer sonic
     fetch_summersonic;
 
-#     for my $p (1 .. 100) {
-#         $logger->debug('page:' . $p);
-#         my $content = LWP::UserAgent->new->request(HTTP::Request->new(GET => $api_url . $p))->content;
-#         $content = decode_utf8($content);
-#         my @adds = parse_videos($content);
-#         @adds = exists_check(\@videos, \@adds);
-#         last unless scalar @adds;
-# 
-#         push @videos, @adds;
-#     }
+    use DBI;
+    my $dbh = DBI->connect('dbi:SQLite:dbname=' . $FindBin::Bin . '/feses.db', "", "", {PrintError => 1, AutoCommit => 1});
 
-    die 'debug stop';
+    my $select = "select * from bands where location_id = ? and local_id = ?";
+    my $sth = $dbh->prepare($select);
+    my $sth_insert = $dbh->prepare(q{insert into bands (location_id, local_id, name, date, created_at, updated_at, deleted) values (?, ?, ?, ?, datetime('now', 'localtime'), datetime('now', 'localtime'), 0)});
+    my $sth_update = $dbh->prepare(q{update bands set local_id = ?, name = ?, date = ?, updated_at = datetime('now', 'localtime') where id = ?});
 
-#     use DBI;
-#     my $dbh = DBI->connect('dbi:SQLite:dbname=' . $FindBin::Bin . '/videos.db', "", "", {PrintError => 1, AutoCommit => 1});
-# 
-#     my $last_checked_date = last_checked_date($dbh);
-#     print 'last_checked_date:', $last_checked_date, "\n";
-#     print 'checked_date:', $checked_date, "\n";
-# 
-#     my $count = scalar @videos;
-#     my $i = 1;
-#     for my $v (@videos) {
-#         $logger->debug("($i/$count) " . $v->{url});
-#         $i++;
-#         my $select = "select * from videos where url = ?";
-#         my $sth = $dbh->prepare($select);
-#         my $video_id;
-#         $sth->execute($v->{url});
-#         if (my $old = $sth->fetchrow_hashref) {
-#             if ($old->{seasons} != $v->{seasons} or $old->{episodes} != $v->{episodes}) {
-#                 $logger->info('changed.');
-#                 my $message = 
-#                     '[' . $v->{title} . '] が更新されました。' .
-#                     $old->{seasons} . '(' . $old->{episodes} . ') -> ' . $v->{seasons} . '(' . $v->{episodes} . ') ' . $v->{url};
-#                 twitter_post($message);
-#                 $sth = $dbh->prepare(q{insert into updates (video_id, is_new, seasons, episodes, created_at, updated_at) values (?, 0, ?, ?, datetime('now', 'localtime'), datetime('now', 'localtime'))});
-#                 $sth->execute(
-#                     $old->{id},
-#                     $v->{seasons},
-#                     $v->{episodes},
-#                 ) or die 'failed to insert. url:' . $v->{title};
-#             }
-#             $sth = $dbh->prepare(q{update videos set seasons = ?, episodes = ?, updated_at = datetime('now', 'localtime') where id = ?});
-#             $sth->execute(
-#                 $v->{seasons},
-#                 $v->{episodes},
-#                 $old->{id},
-#             ) or die 'failed to update. url:' . $v->{title};
-#             $video_id = $old->{id};
-#         } else {
-#             my $seasons_info = '';
-#             if ($v->{episodes} > 1) {
-#                 $seasons_info = "$v->{seasons} ($v->{episodes})";
-#             }
-#             my $message = '[' . $v->{title} . '] が追加されました。' . $seasons_info . ' ' . $v->{url};
-#             twitter_post($message);
-#             $sth = $dbh->prepare(q{insert into videos (url, title, seasons, episodes, created_at, updated_at) values (?, ?, ?, ?, datetime('now', 'localtime'), datetime('now', 'localtime'))});
-#             $sth->execute(
-#                 $v->{url},
-#                 $v->{title},
-#                 $v->{seasons},
-#                 $v->{episodes},
-#             ) or die 'failed to insert. url:' . $v->{title};
-#             my $last_insert_id = $dbh->func('last_insert_rowid');
-#             print 'new id:' . $last_insert_id, "\n";
-#             $sth = $dbh->prepare(q{insert into updates (video_id, is_new, seasons, episodes, created_at, updated_at) values (?, 1, ?, ?, datetime('now', 'localtime'), datetime('now', 'localtime'))});
-#             $sth->execute(
-#                 $last_insert_id,
-#                 $v->{seasons},
-#                 $v->{episodes},
-#             ) or die 'failed to insert. url:' . $v->{title};
-#             $video_id = $last_insert_id;
-#         }
-#         $sth = $dbh->prepare(q{insert into published_videos (video_id, checked_date, created_at, updated_at) values (?, ?, datetime('now', 'localtime'), datetime('now', 'localtime'))});
-#         $sth->execute(
-#             $video_id,
-#             $checked_date,
-#         ) or die 'failed to insert. id:' . $video_id;
-#     }
-#     # check deleted videos
-#     check_deleted_videos($dbh, $last_checked_date, $checked_date);
-# 
-#     $dbh->disconnect;
+    while (my ($fes_name, $fes) = each %$feses) {
+        while (my ($location_name, $location) = each %{$fes->{locations}}) {
+            while (my ($date, $bands) = each %{$location->{days}}) {
+                foreach my $band (@$bands) {
+                    print encode_utf8 $band->{name}, "\n";
+                    $sth->execute($location->{id}, $band->{id});
+                    my $already_registered_band = $sth->fetchrow_hashref;
+                    if ($already_registered_band) {
+                        #update
+                        my $id = $already_registered_band->{id};
+                        $sth_update->execute(
+                            $band->{id},
+                            $band->{name},
+                            $date,
+                            $already_registered_band->{id},
+                        ) or die 'failed to update. url:' . $band->{name};
+                    } else {
+                        #insert
+                        $sth_insert->execute(
+                            $location->{id},
+                            $band->{id},
+                            $band->{name},
+                            $date,
+                        ) or die 'failed to insert. url:' . $band->{name};
+                    }
+                }
+            }
+        }
+    }
+    $sth->finish;
+    $sth_insert->finish;
+    $sth_update->finish;
+    $dbh->disconnect;
 } catch {
     $logger->error_die("caught error: $_");
 };
@@ -367,9 +287,12 @@ $logger->info('finished cleanly.');
 
 __END__
 
-create table videos (id integer primary key, url varchar, title varchar, seasons integer, episodes integer, created_at datetime, updated_at datetime);
-create index videos_url on videos(url);
-create table updates (id integer primary key, video_id integer not null, is_new integer not null, seasons integer, episodes integer, created_at datetime, updated_at datetime);
-create table published_videos (id integer primary key, checked_date varchar, video_id integer, created_at datetime, updated_at datetime);
-create index published_videos_checked_date on published_videos(checked_date);
+create table feses (id integer primary key, name varchar, created_at datetime, updated_at datetime);
+insert into feses (id, name, created_at, updated_at) values(1, 'FUJI ROCK FESTIVAL ''13', current_timestamp, current_timestamp);
+insert into feses (id, name, created_at, updated_at) values(2, 'SUMMER SONIC 2013', current_timestamp, current_timestamp);
+create table locations (id integer primary key, fes_id integer, name varchar, lineup_page varchar, created_at datetime, updated_at datetime);
+insert into locations (id, fes_id, name, lineup_page, created_at, updated_at) values(1, 1, '新潟県 湯沢町 苗場スキー場', 'http://www.fujirockfestival.com/artist/', current_timestamp, current_timestamp);
+insert into locations (id, fes_id, name, lineup_page, created_at, updated_at) values(2, 2, '東京', 'http://www.summersonic.com/2013/lineup/index.html', current_timestamp, current_timestamp);
+insert into locations (id, fes_id, name, lineup_page, created_at, updated_at) values(3, 2, '大阪', 'http://www.summersonic.com/2013/lineup/osaka.html', current_timestamp, current_timestamp);
+create table bands (id integer primary key, location_id integer, date varchar, name varchar, local_id varchar, created_at datetime, updated_at datetime, deleted);
 
